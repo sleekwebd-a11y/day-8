@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Velvet 21 • Day 8</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-neutral-950 text-white font-sans min-h-screen overflow-x-hidden">
+
+  <div class="max-w-[420px] mx-auto bg-neutral-950 min-h-screen flex flex-col shadow-2xl relative">
+
+    <!-- HEADER -->
+    <header class="bg-gradient-to-br from-emerald-900 via-black to-purple-900 px-6 py-8 text-center border-b border-emerald-500/30">
+      <h1 class="text-5xl font-bold tracking-tighter" style="font-family: 'Space Grotesk', sans-serif;">VELVET<span class="text-emerald-400">21</span></h1>
+      <p class="text-emerald-400 text-sm tracking-[4px] mt-1">DAY 8 BLACKJACK SIMULATOR</p>
+      <div class="mt-6 flex justify-center gap-8 text-xs">
+        <div><span id="bankroll-display" class="text-3xl font-bold text-emerald-400">$2500</span><br><span class="text-neutral-500">BANKROLL</span></div>
+        <div><span id="current-bet" class="text-3xl font-bold text-white">$0</span><br><span class="text-neutral-500">CURRENT BET</span></div>
+      </div>
+    </header>
+
+    <!-- GAME TABLE -->
+    <main class="flex-1 p-5 relative" style="background: radial-gradient(circle at center, #052e16 0%, #000000 70%);">
+
+      <!-- DEALER AREA -->
+      <div class="mb-8">
+        <p class="text-xs text-neutral-400 mb-2 text-center">DEALER <span id="dealer-total" class="text-emerald-400 font-mono"></span></p>
+        <div id="dealer-hand" class="flex justify-center gap-3 min-h-[110px]"></div>
+      </div>
+
+      <!-- PLAYER AREA -->
+      <div class="mt-12">
+        <p class="text-xs text-neutral-400 mb-2 text-center">YOU <span id="player-total" class="text-emerald-400 font-mono"></span></p>
+        <div id="player-hand" class="flex justify-center gap-3 min-h-[110px]"></div>
+      </div>
+
+      <!-- RESULT OVERLAY -->
+      <div id="result-overlay" class="hidden absolute inset-0 bg-black/80 flex items-center justify-center z-50 rounded-3xl">
+        <div class="text-center">
+          <p id="result-text" class="text-5xl font-bold mb-6"></p>
+          <button onclick="newHand()" class="px-10 py-4 bg-emerald-500 hover:bg-emerald-600 rounded-2xl text-xl font-semibold">NEXT HAND</button>
+        </div>
+      </div>
+
+      <!-- SIDE BETS -->
+      <div class="absolute top-8 right-5 bg-neutral-900/90 backdrop-blur-md rounded-2xl p-4 text-xs border border-purple-500/30">
+        <p class="text-purple-400 mb-3">SIDE BETS</p>
+        <label class="flex items-center gap-2 text-sm cursor-pointer">
+          <input type="checkbox" id="perfect-pair" class="accent-purple-500">
+          Perfect Pairs (+$25)
+        </label>
+      </div>
+
+    </main>
+
+    <!-- CONTROLS -->
+    <div class="bg-neutral-900 border-t border-neutral-800 p-5">
+      
+      <!-- BET CHIPS -->
+      <div id="bet-phase" class="mb-6">
+        <p class="text-center text-xs text-neutral-400 mb-3">PLACE YOUR BET</p>
+        <div class="grid grid-cols-6 gap-2">
+          <button onclick="setBet(5)" class="chip">5</button>
+          <button onclick="setBet(25)" class="chip">25</button>
+          <button onclick="setBet(50)" class="chip">50</button>
+          <button onclick="setBet(100)" class="chip">100</button>
+          <button onclick="setBet(500)" class="chip">500</button>
+          <button onclick="setBet(999999)" class="chip text-rose-400">ALL</button>
+        </div>
+        <button onclick="dealHand()" id="deal-btn"
+                class="mt-6 w-full py-5 bg-emerald-500 hover:bg-emerald-600 rounded-3xl text-xl font-bold disabled:opacity-50">
+          DEAL CARDS
+        </button>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div id="action-phase" class="hidden grid grid-cols-4 gap-3">
+        <button onclick="hit()" class="action-btn">HIT</button>
+        <button onclick="stand()" class="action-btn">STAND</button>
+        <button onclick="doubleDown()" class="action-btn">DOUBLE</button>
+        <button onclick="splitHand()" id="split-btn" class="action-btn opacity-40 pointer-events-none">SPLIT</button>
+      </div>
+    </div>
+
+    <!-- FOOTER BAR -->
+    <div class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[420px] w-full bg-black/90 border-t border-emerald-500/20 py-3 px-6 text-xs flex justify-between items-center z-50">
+      <div onclick="resetBankroll()" class="cursor-pointer">RESET BANKROLL</div>
+      <div id="hand-history" class="text-neutral-400 text-[10px] font-mono"></div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
