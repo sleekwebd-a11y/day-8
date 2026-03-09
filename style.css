@@ -108,3 +108,28 @@ h1   { font-family: 'Space Grotesk', sans-serif; }
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width: 0; }
+/* ── SPLIT HANDS ── */
+.split-hand-wrapper {
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 8px 10px;
+  transition: border-color .2s, background .2s;
+  text-align: center;
+}
+.split-hand-wrapper.split-active {
+  border-color: #10b981;
+  background: rgba(16,185,129,0.07);
+  box-shadow: 0 0 18px rgba(16,185,129,0.15);
+}
+.split-label {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.split-hand-wrapper.split-active .split-label {
+  color: #10b981;
+}
+
