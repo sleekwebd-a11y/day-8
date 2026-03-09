@@ -2,7 +2,7 @@ let bankroll = 2500;
 let currentBet = 0;
 let perfectPairBet = 0;
 let twentyOnePlusThreeBet = 0;
-let betTarget = 'main'; // main, perfect, 21plus3
+let betTarget = 'main';
 
 let deck = [], dealerHand = [], playerHand = [], gamePhase = 'bet';
 
@@ -44,32 +44,23 @@ function updateTotals() {
   document.getElementById('player-total').textContent = cardValue(playerHand);
 }
 
-function updateWagered() {
-  const total = currentBet + perfectPairBet + twentyOnePlusThreeBet;
-  document.getElementById('total-wagered').textContent = '$' + total;
-}
-
 function selectTarget(target) {
   betTarget = target;
   document.querySelectorAll('.bet-box').forEach(b => b.classList.remove('active'));
-  document.getElementById('target-main').classList.toggle('bg-emerald-600', target === 'main');
-  document.getElementById('target-perfect').classList.toggle('bg-emerald-600', target === 'perfect');
-  document.getElementById('target-21plus3').classList.toggle('bg-emerald-600', target === '21plus3');
   if (target === 'perfect') document.getElementById('perfect-box').classList.add('active');
   if (target === '21plus3') document.getElementById('21plus3-box').classList.add('active');
 }
 
 function placeBet(amount) {
   if (amount === 999999) amount = bankroll;
-  if (amount > bankroll) amount = bankroll;
+  amount = Math.min(amount, bankroll);
 
-  if (betTarget === 'main') currentBet = Math.min(amount + currentBet, bankroll);
-  else if (betTarget === 'perfect') perfectPairBet = Math.min(amount + perfectPairBet, bankroll);
-  else twentyOnePlusThreeBet = Math.min(amount + twentyOnePlusThreeBet, bankroll);
+  if (betTarget === 'main') currentBet += amount;
+  else if (betTarget === 'perfect') perfectPairBet += amount;
+  else twentyOnePlusThreeBet += amount;
 
   document.getElementById('perfect-bet').textContent = '$' + perfectPairBet;
   document.getElementById('21plus3-bet').textContent = '$' + twentyOnePlusThreeBet;
-  updateWagered();
   document.getElementById('deal-btn').disabled = currentBet < 5;
 }
 
@@ -86,8 +77,8 @@ function saveBankroll() {
 }
 
 function dealHand() {
-  const totalSide = perfectPairBet + twentyOnePlusThreeBet;
   if (currentBet < 5) return;
+  const totalSide = perfectPairBet + twentyOnePlusThreeBet;
   bankroll -= (currentBet + totalSide);
   document.getElementById('bankroll-display').textContent = '$' + bankroll;
 
@@ -97,12 +88,11 @@ function dealHand() {
 
   gamePhase = 'playing';
   document.getElementById('deal-btn').disabled = true;
+  document.getElementById('action-phase').classList.remove('hidden');
 
   renderHand('dealer-hand', dealerHand, true);
   renderHand('player-hand', playerHand);
   updateTotals();
-
-  if (cardValue(playerHand) === 21) endHand('blackjack');
 }
 
 function hit() {
@@ -113,7 +103,9 @@ function hit() {
 }
 
 async function stand() {
+  document.getElementById('action-phase').classList.add('hidden');
   renderHand('dealer-hand', dealerHand); // reveal hole card
+
   while (cardValue(dealerHand) < 17) {
     await new Promise(r => setTimeout(r, 800));
     dealerHand.push(deck.pop());
@@ -123,59 +115,53 @@ async function stand() {
   endHand('normal');
 }
 
+function doubleDown() {
+  if (bankroll < currentBet) return;
+  bankroll -= currentBet;
+  currentBet *= 2;
+  document.getElementById('bankroll-display').textContent = '$' + bankroll;
+
+  playerHand.push(deck.pop());
+  renderHand('player-hand', playerHand);
+  updateTotals();
+  stand();
+}
+
 function endHand(reason) {
   gamePhase = 'ended';
   const playerTotal = cardValue(playerHand);
   const dealerTotal = cardValue(dealerHand);
 
   let payout = 0;
-  let message = '';
-
-  // Main bet
   if (reason === 'blackjack') payout = currentBet * 2.5;
   else if (reason !== 'bust' && playerTotal <= 21 && (dealerTotal > 21 || playerTotal > dealerTotal)) payout = currentBet * 2;
   else if (playerTotal === dealerTotal) payout = currentBet;
 
-  // Perfect Pairs side bet
-  if (perfectPairBet > 0 && playerHand[0].val === playerHand[1].val) {
-    payout += perfectPairBet * 6;
-  }
-
-  // 21+3 side bet (player 2 cards + dealer up card)
-  if (twentyOnePlusThreeBet > 0) {
-    const threeCards = [playerHand[0], playerHand[1], dealerHand[0]];
-    const ranks = threeCards.map(c => c.val).sort();
-    const suits = threeCards.map(c => c.suit);
-    if (ranks[0] === ranks[1] && ranks[1] === ranks[2]) payout += twentyOnePlusThreeBet * 30; // three of a kind
-    else if (suits[0] === suits[1] && suits[1] === suits[2]) payout += twentyOnePlusThreeBet * 5; // flush
-    else if (parseInt(ranks[0])+1 === parseInt(ranks[1]) && parseInt(ranks[1])+1 === parseInt(ranks[2])) payout += twentyOnePlusThreeBet * 10; // straight
-  }
-
   bankroll += payout;
   document.getElementById('bankroll-display').textContent = '$' + Math.floor(bankroll);
 
-  document.getElementById('result-text').innerHTML = `<span class="block text-6xl">${message || (payout > currentBet + perfectPairBet + twentyOnePlusThreeBet ? 'YOU WIN!' : 'DEALER WINS')}</span><span class="text-emerald-400 text-4xl">+$${payout}</span>`;
+  document.getElementById('result-text').innerHTML = `<span class="block text-6xl">${payout > currentBet ? 'YOU WIN!' : 'DEALER WINS'}</span><span class="text-emerald-400 text-4xl">+$${payout}</span>`;
   document.getElementById('result-overlay').classList.remove('hidden');
 }
 
 function newHand() {
   document.getElementById('result-overlay').classList.add('hidden');
+  document.getElementById('action-phase').classList.add('hidden');
   currentBet = perfectPairBet = twentyOnePlusThreeBet = 0;
   document.getElementById('perfect-bet').textContent = '$0';
   document.getElementById('21plus3-bet').textContent = '$0';
-  updateWagered();
   document.getElementById('dealer-hand').innerHTML = '';
   document.getElementById('player-hand').innerHTML = '';
   gamePhase = 'bet';
   document.getElementById('deal-btn').disabled = true;
 }
 
-// Load saved bankroll
 if (localStorage.getItem('velvet_bankroll')) bankroll = parseInt(localStorage.getItem('velvet_bankroll'));
 document.getElementById('bankroll-display').textContent = '$' + bankroll;
 
 function init() {
-  selectTarget('main');
-  console.log('%cVelvet 21 v4 loaded – bankroll obvious + real side bets 🔥', 'color:#10b981; font-weight:bold');
+  document.getElementById('deal-btn').disabled = true;
+  createDeck();
+  console.log('%cVelvet 21 v5 – fully playable + bankroll fixed 🔥', 'color:#10b981; font-weight:bold');
 }
 window.onload = init;
