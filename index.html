@@ -12,13 +12,13 @@
 
 <div class="max-w-[420px] mx-auto bg-neutral-950 min-h-screen flex flex-col shadow-2xl">
 
-  <!-- HEADER - Bankroll now huge & obvious -->
+  <!-- HEADER -->
   <header class="bg-gradient-to-br from-emerald-900 to-black px-6 py-6 border-b border-emerald-500/30">
     <div class="flex items-center justify-between">
       <h1 class="text-5xl font-bold tracking-tighter" style="font-family: 'Space Grotesk', sans-serif;">VELVET<span class="text-emerald-400">21</span></h1>
-      <div onclick="showBankrollModal()" class="text-right cursor-pointer active:scale-95 transition">
+      <div onclick="showBankrollModal()" class="text-right cursor-pointer active:scale-95">
         <p class="text-xs text-neutral-400">YOUR BANKROLL</p>
-        <p id="bankroll-display" class="text-5xl font-bold text-emerald-400">$2500</p>
+        <p id="bankroll-display" class="text-4xl font-bold text-emerald-400">$2500</p>
       </div>
     </div>
   </header>
@@ -33,6 +33,13 @@
       <p class="text-xs text-neutral-400 mb-2 text-center">YOU <span id="player-total" class="font-mono"></span></p>
       <div id="player-hand" class="flex justify-center gap-3 min-h-[110px]"></div>
     </div>
+
+    <div id="result-overlay" class="hidden absolute inset-0 bg-black/90 flex items-center justify-center z-50">
+      <div class="text-center">
+        <p id="result-text" class="text-5xl font-bold mb-8"></p>
+        <button onclick="newHand()" class="px-12 py-5 bg-emerald-500 rounded-3xl text-xl font-semibold">NEXT HAND</button>
+      </div>
+    </div>
   </main>
 
   <!-- SIDE BETS + CONTROLS -->
@@ -42,12 +49,12 @@
       <div onclick="selectTarget('perfect')" id="perfect-box" class="bet-box bg-neutral-800 rounded-2xl p-4 cursor-pointer">
         <p class="text-purple-400 text-sm">Perfect Pairs</p>
         <p id="perfect-bet" class="text-3xl font-bold">$0</p>
-        <p class="text-[10px] text-neutral-400">up to 25:1</p>
+        <p class="text-xs text-neutral-400">up to 25:1</p>
       </div>
       <div onclick="selectTarget('21plus3')" id="21plus3-box" class="bet-box bg-neutral-800 rounded-2xl p-4 cursor-pointer">
         <p class="text-amber-400 text-sm">21 + 3</p>
         <p id="21plus3-bet" class="text-3xl font-bold">$0</p>
-        <p class="text-[10px] text-neutral-400">9:1</p>
+        <p class="text-xs text-neutral-400">9:1</p>
       </div>
     </div>
 
@@ -71,10 +78,12 @@
     <button onclick="dealHand()" id="deal-btn" class="w-full py-6 bg-emerald-500 rounded-3xl text-xl font-bold">DEAL CARDS</button>
   </div>
 
-  <!-- Current Total Wager -->
-  <div class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-neutral-900 border border-emerald-500/30 px-8 py-3 rounded-3xl text-center shadow-2xl">
-    <span class="text-xs text-neutral-400">TOTAL WAGERED</span>
-    <p id="total-wagered" class="text-2xl font-bold">$0</p>
+  <!-- Action Buttons -->
+  <div id="action-phase" class="hidden fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[420px] w-full bg-neutral-900 border-t border-neutral-800 grid grid-cols-4 gap-3 p-5">
+    <button onclick="hit()" class="action-btn">HIT</button>
+    <button onclick="stand()" class="action-btn">STAND</button>
+    <button onclick="doubleDown()" class="action-btn">DOUBLE</button>
+    <button onclick="splitHand()" class="action-btn opacity-30">SPLIT</button>
   </div>
 
 </div>
