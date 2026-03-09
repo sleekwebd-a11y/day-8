@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Velvet 21 • Day 8</title>
+  <title>Velvet 21</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -13,87 +13,128 @@
 <div class="max-w-[420px] mx-auto bg-neutral-950 min-h-screen flex flex-col shadow-2xl">
 
   <!-- HEADER -->
-  <header class="bg-gradient-to-br from-emerald-900 to-black px-6 py-6 border-b border-emerald-500/30">
+  <header class="px-6 py-5 border-b border-emerald-500/20" style="background: linear-gradient(135deg, #022c1a 0%, #000 100%);">
     <div class="flex items-center justify-between">
-      <h1 class="text-5xl font-bold tracking-tighter" style="font-family: 'Space Grotesk', sans-serif;">VELVET<span class="text-emerald-400">21</span></h1>
-      <div onclick="showBankrollModal()" class="text-right cursor-pointer active:scale-95">
-        <p class="text-xs text-neutral-400">YOUR BANKROLL</p>
-        <p id="bankroll-display" class="text-4xl font-bold text-emerald-400">$2500</p>
+      <h1 class="text-4xl font-bold tracking-tighter" style="font-family: 'Space Grotesk', sans-serif;">
+        VELVET<span class="text-emerald-400">21</span>
+      </h1>
+      <div onclick="showBankrollModal()" class="text-right cursor-pointer active:scale-95 transition-transform">
+        <p class="text-[10px] tracking-widest text-neutral-500 uppercase">Bankroll</p>
+        <p id="bankroll-display" class="text-3xl font-bold text-emerald-400">$2500</p>
       </div>
     </div>
   </header>
 
   <!-- TABLE -->
-  <main class="flex-1 p-5 relative" style="background: radial-gradient(circle at center, #052e16 0%, #000000 70%);">
-    <div class="mb-8">
-      <p class="text-xs text-neutral-400 mb-2 text-center">DEALER <span id="dealer-total" class="font-mono"></span></p>
-      <div id="dealer-hand" class="flex justify-center gap-3 min-h-[110px]"></div>
-    </div>
-    <div>
-      <p class="text-xs text-neutral-400 mb-2 text-center">YOU <span id="player-total" class="font-mono"></span></p>
-      <div id="player-hand" class="flex justify-center gap-3 min-h-[110px]"></div>
+  <main class="flex-1 px-5 pt-6 pb-4 relative" style="background: radial-gradient(ellipse at center, #052e16 0%, #000 75%);">
+
+    <!-- Dealer -->
+    <div class="mb-6">
+      <div class="flex items-center justify-center gap-2 mb-3">
+        <p class="text-[10px] tracking-widest text-neutral-500 uppercase">Dealer</p>
+        <span id="dealer-total" class="text-xs font-bold bg-neutral-800 px-2 py-0.5 rounded-full text-neutral-300"></span>
+      </div>
+      <div id="dealer-hand" class="flex justify-center gap-3 min-h-[110px] items-center"></div>
     </div>
 
-    <div id="result-overlay" class="hidden absolute inset-0 bg-black/90 flex items-center justify-center z-50">
-      <div class="text-center">
-        <p id="result-text" class="text-5xl font-bold mb-8"></p>
-        <button onclick="newHand()" class="px-12 py-5 bg-emerald-500 rounded-3xl text-xl font-semibold">NEXT HAND</button>
+    <!-- Divider -->
+    <div class="border-t border-dashed border-emerald-900/60 my-4"></div>
+
+    <!-- Player -->
+    <div>
+      <div class="flex items-center justify-center gap-2 mb-3">
+        <p class="text-[10px] tracking-widest text-neutral-500 uppercase">You</p>
+        <span id="player-total" class="text-xs font-bold bg-neutral-800 px-2 py-0.5 rounded-full text-neutral-300"></span>
+      </div>
+      <div id="player-hand" class="flex justify-center gap-3 min-h-[110px] items-center"></div>
+    </div>
+
+    <!-- Result Overlay -->
+    <div id="result-overlay" class="hidden absolute inset-0 flex items-center justify-center z-50" style="background: rgba(0,0,0,0.88); backdrop-filter: blur(6px);">
+      <div class="text-center px-6">
+        <p id="result-label" class="text-sm tracking-widest text-neutral-400 uppercase mb-2"></p>
+        <p id="result-text" class="text-6xl font-bold mb-2"></p>
+        <p id="result-amount" class="text-3xl font-semibold mb-8"></p>
+        <button onclick="newHand()" class="px-12 py-4 bg-emerald-500 hover:bg-emerald-400 rounded-3xl text-lg font-bold transition-colors">
+          NEXT HAND
+        </button>
       </div>
     </div>
   </main>
 
-  <!-- SIDE BETS + CONTROLS -->
-  <div class="bg-neutral-900 border-t border-neutral-800 p-5">
-    <!-- Side Bets -->
-    <div class="grid grid-cols-2 gap-3 mb-6">
-      <div onclick="selectTarget('perfect')" id="perfect-box" class="bet-box bg-neutral-800 rounded-2xl p-4 cursor-pointer">
-        <p class="text-purple-400 text-sm">Perfect Pairs</p>
-        <p id="perfect-bet" class="text-3xl font-bold">$0</p>
-        <p class="text-xs text-neutral-400">up to 25:1</p>
-      </div>
-      <div onclick="selectTarget('21plus3')" id="21plus3-box" class="bet-box bg-neutral-800 rounded-2xl p-4 cursor-pointer">
-        <p class="text-amber-400 text-sm">21 + 3</p>
-        <p id="21plus3-bet" class="text-3xl font-bold">$0</p>
-        <p class="text-xs text-neutral-400">9:1</p>
-      </div>
-    </div>
+  <!-- BET AREA -->
+  <div class="bg-neutral-900 border-t border-neutral-800 px-5 pt-5 pb-3">
 
-    <!-- Bet Target -->
-    <div class="flex gap-2 mb-4 text-xs font-medium">
-      <button onclick="selectTarget('main')" id="target-main" class="flex-1 py-3 bg-emerald-600 rounded-2xl">MAIN BET</button>
-      <button onclick="selectTarget('perfect')" id="target-perfect" class="flex-1 py-3 bg-neutral-800 rounded-2xl">PERFECT PAIRS</button>
-      <button onclick="selectTarget('21plus3')" id="target-21plus3" class="flex-1 py-3 bg-neutral-800 rounded-2xl">21+3</button>
+    <!-- Bet displays: Main + Side Bets -->
+    <div class="grid grid-cols-3 gap-2 mb-4">
+
+      <!-- Main Bet -->
+      <div onclick="selectTarget('main')" id="main-box" class="bet-box active bg-neutral-800 rounded-2xl p-3 cursor-pointer text-center">
+        <p class="text-emerald-400 text-[10px] tracking-widest uppercase mb-1">Main Bet</p>
+        <p id="main-bet-display" class="text-2xl font-bold">$0</p>
+      </div>
+
+      <!-- Perfect Pairs -->
+      <div onclick="selectTarget('perfect')" id="perfect-box" class="bet-box bg-neutral-800 rounded-2xl p-3 cursor-pointer text-center">
+        <p class="text-purple-400 text-[10px] tracking-widest uppercase mb-1">Pairs</p>
+        <p id="perfect-bet" class="text-2xl font-bold">$0</p>
+        <p class="text-[9px] text-neutral-500 mt-0.5">25:1</p>
+      </div>
+
+      <!-- 21+3 -->
+      <div onclick="selectTarget('21plus3')" id="21plus3-box" class="bet-box bg-neutral-800 rounded-2xl p-3 cursor-pointer text-center">
+        <p class="text-amber-400 text-[10px] tracking-widest uppercase mb-1">21+3</p>
+        <p id="21plus3-bet" class="text-2xl font-bold">$0</p>
+        <p class="text-[9px] text-neutral-500 mt-0.5">9:1</p>
+      </div>
     </div>
 
     <!-- Chips -->
-    <div class="grid grid-cols-6 gap-2 mb-6">
-      <button onclick="placeBet(5)" class="chip">5</button>
-      <button onclick="placeBet(25)" class="chip">25</button>
-      <button onclick="placeBet(50)" class="chip">50</button>
-      <button onclick="placeBet(100)" class="chip">100</button>
-      <button onclick="placeBet(500)" class="chip">500</button>
-      <button onclick="placeBet(999999)" class="chip text-rose-400">ALL</button>
+    <div class="grid grid-cols-6 gap-2 mb-4">
+      <button onclick="placeBet(5)"      class="chip">5</button>
+      <button onclick="placeBet(25)"     class="chip">25</button>
+      <button onclick="placeBet(50)"     class="chip">50</button>
+      <button onclick="placeBet(100)"    class="chip">100</button>
+      <button onclick="placeBet(500)"    class="chip">500</button>
+      <button onclick="placeBet(999999)" class="chip chip-all">MAX</button>
     </div>
 
-    <button onclick="dealHand()" id="deal-btn" class="w-full py-6 bg-emerald-500 rounded-3xl text-xl font-bold">DEAL CARDS</button>
+    <!-- Clear + Deal -->
+    <div class="flex gap-3">
+      <button onclick="clearBets()" class="flex-none px-5 py-4 bg-neutral-800 hover:bg-neutral-700 rounded-2xl text-sm font-semibold transition-colors text-neutral-400">
+        CLEAR
+      </button>
+      <button onclick="dealHand()" id="deal-btn" disabled
+        class="flex-1 py-4 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-30 disabled:cursor-not-allowed rounded-3xl text-lg font-bold transition-all">
+        DEAL CARDS
+      </button>
+    </div>
   </div>
 
-  <!-- Action Buttons -->
-  <div id="action-phase" class="hidden fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[420px] w-full bg-neutral-900 border-t border-neutral-800 grid grid-cols-4 gap-3 p-5">
-    <button onclick="hit()" class="action-btn">HIT</button>
-    <button onclick="stand()" class="action-btn">STAND</button>
-    <button onclick="doubleDown()" class="action-btn">DOUBLE</button>
-    <button onclick="splitHand()" class="action-btn opacity-30">SPLIT</button>
+  <!-- Action Buttons (during play) -->
+  <div id="action-phase" class="hidden fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[420px] w-full bg-neutral-900/95 border-t border-neutral-800 grid grid-cols-4 gap-3 px-5 py-4" style="backdrop-filter: blur(10px);">
+    <button onclick="hit()"        class="action-btn">HIT</button>
+    <button onclick="stand()"      class="action-btn">STAND</button>
+    <button onclick="doubleDown()" class="action-btn" id="btn-double">DOUBLE</button>
+    <button onclick="splitHand()"  class="action-btn" id="btn-split">SPLIT</button>
   </div>
 
 </div>
 
 <!-- Bankroll Modal -->
-<div id="bankroll-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[100]">
-  <div class="bg-neutral-900 rounded-3xl p-8 w-80 text-center">
-    <h3 class="text-2xl font-semibold mb-6">Set Your Bankroll</h3>
-    <input id="modal-bankroll" type="number" class="w-full text-center text-6xl font-bold bg-neutral-800 rounded-2xl py-6 outline-none">
-    <button onclick="saveBankroll()" class="mt-6 w-full py-5 bg-emerald-500 rounded-3xl text-lg font-semibold">SAVE BANKROLL</button>
+<div id="bankroll-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]" style="backdrop-filter: blur(8px);">
+  <div class="bg-neutral-900 border border-neutral-700 rounded-3xl p-8 w-80 text-center">
+    <h3 class="text-xl font-semibold mb-1">Set Bankroll</h3>
+    <p class="text-xs text-neutral-500 mb-6">Tap to edit your starting balance</p>
+    <input id="modal-bankroll" type="number" inputmode="numeric"
+      class="w-full text-center text-5xl font-bold bg-neutral-800 border border-neutral-700 rounded-2xl py-5 outline-none focus:border-emerald-500 transition-colors text-emerald-400">
+    <button onclick="saveBankroll()" class="mt-5 w-full py-4 bg-emerald-500 hover:bg-emerald-400 rounded-3xl text-lg font-bold transition-colors">
+      SAVE
+    </button>
+    <button onclick="document.getElementById('bankroll-modal').classList.add('hidden')"
+      class="mt-3 w-full py-3 text-sm text-neutral-500 hover:text-neutral-300 transition-colors">
+      Cancel
+    </button>
   </div>
 </div>
 
